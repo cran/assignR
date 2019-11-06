@@ -1,0 +1,51 @@
+# assignR
+
+## Basic
+
+Data and tools supporting geographic assignment of materials based on their isotopic chemistry. Isoscapes (environmental isotope maps) can be generated externally or defaults (*d2h_world.rda*, *d18o_world.rda*) are provided in the package. Data from samples of known origin are used to calibrate the relationship between isoscape and sample values, and can be provided by the user or extracted from the package database (*knownOrig.rda*). Functions (*calRaster*, *pdRaster*) support calibrating the isoscape and inverting Bayes theorem to estimate the probability of origin for unknown samples across a geographic study domain. Functions (*QA*, *plot.QA*) allow quality assessment of assignment results and comparison of methods using split-sample tests and known origin data. Functions (*oddsRatio*, *qtlRaster*, *jointP*, *unionP*) support post-hoc classification of results, summarization of results from multiple samples, and comparison of support for different locations.
+
+For step-by-step examples demonstrating all functions see [https://spatial-lab.github.io/assignR/](https://spatial-lab.github.io/assignR/).
+
+## Install and load
+install.packages("assignR")
+library(assignR)
+
+## Package contents
+
+**Datasets**
+
+*d2h_world.rda* - Global growing season precipitation H isoscape from waterisotopes.org, including predicted mean and 95% confidence interval width
+
+*d18o_world.rda* - Global growing season precipitation O isoscape from waterisotopes.org, including predicted mean and 95% confidence interval width
+
+*knownOrig.rda*	- Hydrogen and oxygen (if available) isotope values of known-origin samples including human hair, insect chitin and bird feathers, with location information (currently 2721 samples)
+
+*naMap.rda* - North America outline
+
+*plover_range_BreedingSeason.rda* - Mountain plover breeding season range
+
+*plover_range_NonBreedingSeason.rda* - Mountain plover non-breeding season range
+
+**Functions**
+
+*subOrigData* - Subset the known-origin stable isotope dataset included in this package
+
+*calRaster* - Transform environmental isoscape to tissue isoscape
+
+*pdRaster* - Assign sample to calibrated tissue isoscape based on tissue isotopic composition
+
+*qtlRaster* - Select most likely region of origin from posterior probability surface (by cumulative percent area probability)
+
+*jointP* - Calculate joint probability for individuals of common origin (product of probabilities)
+
+*unionP* - Calculate probability that at least one individual came from each map location (union of probabilities)
+
+*oddsRatio* - Calculate ratio of odds for two locations or areas (points or polygons)
+
+*QA* - Quality analysis of geographic assignment
+
+*plot.QA* - Plot results of one or more quality analyses from QA function
+
+<!-- badges: start -->
+  [![Travis build status](https://travis-ci.org/SPATIAL-Lab/assignR.svg?branch=master)](https://travis-ci.org/SPATIAL-Lab/assignR)
+  <!-- badges: end -->
