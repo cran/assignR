@@ -20,6 +20,8 @@ Let's load the package
 
 ```{r install, message=FALSE, warning=FALSE, results="hide"}
 library(assignR)
+library(raster)
+library(sp)
 ```
 
 *****
@@ -31,12 +33,11 @@ plot(naMap)
 ```
 
 *****
-Load and plot the global growing season precipitation H isoscape. Notice this is a RasterBrick with two layers, the mean prediction and a standard deviation of the prediction. The layers are from [waterisotopes.org](http://wateriso.utah.edu/waterisotopes/). We'll also reduce the resolution of this layer to speed up processing these examples.
+Load and plot a growing season precipitation H isoscape for North America. Notice this is a RasterBrick with two layers, the mean prediction and a standard deviation of the prediction. The layers are from [waterisotopes.org](http://wateriso.utah.edu/waterisotopes/), and resolution has been reduced to speed up processing in these examples. Full-resolution global growing season isoscapes are included in the package as *d2h_world.rda* and *d18o_world.rda*. 
 
-```{r isoscape}
-data("d2h_world")
-d2h_coarse = aggregate(d2h_world, 9)
-plot(d2h_coarse)
+```{r isoscape, fig.width = 6, fig.asp = 0.5}
+data("d2h_lrNA")
+plot(d2h_lrNA)
 ```
 
 *****
@@ -68,7 +69,7 @@ For a real application you would want to explore the *knownOrig.rda* dataset to 
 We need to start by assessing how the environmental (precipitation) isoscape values correlate with the sample values. *calRaster* fits a linear model relating the precipitation isoscape values to sample values, and applies it to produce a sample-type specific isoscape.
 
 ```{r calRaster}
-r = calRaster(known = d, isoscape = d2h_coarse, mask = naMap)
+r = calRaster(known = d, isoscape = d2h_lrNA, mask = naMap)
 ```
 
 *****
@@ -101,39 +102,37 @@ Check out the help page for *pdRaster* for additional options, including the use
 # Post-hoc Analysis
 ## Odds Ratio
 
-The *oddsRatio* tool compares the posterior probabilities for two different locations or regions. This might be useful in answering real-world questions...for example "is this sample more likely from France or Spain?", or "how likely is this hypothesized location relative to other possibilities?". 
+The *oddsRatio* tool compares the posterior probabilities for two different locations or regions. This might be useful in answering real-world questions...for example "is this sample more likely from France or Spain?", or "how likley is this hypothesized location relative to other possibilities?". 
 
-Let's compare probabilities for two spatial areas defined by the summer and winter ranges of the Mountain Plover. Yes, this is a different species than we are working with, and in most cases we would not be trying to distinguish between winter and summer habitats, but this will illustrate the point!
-
-Load the SpatialPolygons and plot them.
+Let's compare probabilities for two spatial areas - the states of Utah and New Mexico. First we'll load the SpatialPolygons and plot them.
 
 ```{r polygons}
-data("plover_range_BreedingSeason")
-data("plover_range_NonBreedingSeason")
+data("states")
+s1 = states[states$STATE_ABBR == "UT",]
+s2 = states[states$STATE_ABBR == "NM",]
 plot(naMap)
-lines(plover_range_BreedingSeason, col = c("red"))
-lines(plover_range_NonBreedingSeason, col = c("blue"))
+lines(s1, col = c("red"))
+lines(s2, col = c("blue"))
 ```
 
-Note that the regions are complex and consist of multiple parts, which is not a problem.
- 
-*****
 Get the odds ratio for the two regions. The result reports the odds ratio for the regions (first relative to second) for each of the 5 unknown samples plus the ratio of the areas of the regions. If the isotope values (& prior) were completely uninformative the odds ratios would equal the ratio of areas.
 
 ```{r oddsRatio1}
-p12 = rbind(plover_range_BreedingSeason, plover_range_NonBreedingSeason)
-oddsRatio(asn, p12)
+s12 = rbind(s1, s2)
+oddsRatio(asn, s12)
 ```
 
-Here you can see that even though the summer range is a bit smaller the isotopic evidence suggests it's much more likely to be the origin of each sample. This result is consistent with what you might infer from a first-order comparison of the range map with the posterior probability maps, above.
+Here you can see that even though Utah is quite a bit smaller the isotopic evidence suggests it's much more likely to be the origin of each sample. This result is consistent with what you might infer from a first-order comparison of the state map with the posterior probability maps, above.
 
 *****
 Comparisons can also be made using points. Let's create two points (one in each of the Plover regions) and compare their odds. This result also shows the odds ratio for each point relative to the most- and least-likely grid cells on the posterior probability map.
 
 ```{r oddsRatio2}
-pp1 = c(-108,42)
-pp2 = c(-103,25)
-pp12 = SpatialPoints(coords = rbind(pp1,pp2), proj4string=crs("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"))
+pp1 = c(-112,40)
+pp2 = c(-105,33)
+pp12 = SpatialPoints(coords = rbind(pp1,pp2), 
+                     proj4string=crs("+proj=longlat +datum=WGS84 +no_defs 
+                                     +ellps=WGS84 +towgs84=0,0,0"))
 oddsRatio(asn, pp12)
 ```
 
@@ -189,14 +188,14 @@ qtlRaster(up, threshold = 0.1)
 
 How good are the geographic assignments? What area or probability threshold should be used? Is it better to use isoscape *A* or *B* for my analysis? These questions can be answered through split-sample validation using *QA*.
 
-We will run quality assessment on the known-origin dataset and precipitation isoscape. These analyses take some time to run, depending on the number of stations and iterations used (this one took about two minutes on my desktop PC).
+We will run quality assessment on the known-origin dataset and precipitation isoscape. These analyses take some time to run, depending on the number of stations and iterations used (this one took about two minutes on my desktop PC).  
 
 ```{r QA1, warning=FALSE}
-qa1 = QA(d2h_coarse, d, valiStation = 8, valiTime = 4, mask = naMap, name = "normal")
+qa1 = QA(d2h_lrNA, d, valiStation = 8, valiTime = 4, mask = naMap, name = "normal")
 ```
 
 *****
-Plot the result. 
+Plot the result. (Please note that because of changes in R's random number generator your results may not exactly match those shown here if you are using R version 3.5.X.)
 
 ```{r plot.QA1}
 plot(qa1)
@@ -211,10 +210,10 @@ How would using a different isoscape or different known origin dataset affect th
 
 Let's modify our isoscape to add some random noise.
 
-```{r modraster}
-dv = getValues(d2h_coarse[[1]])
+```{r modraster, fig.width=5, fig.asp = 0.6}
+dv = getValues(d2h_lrNA[[1]])
 dv = dv + rnorm(length(dv), 0, 15)
-d2h_fuzzy = setValues(d2h_coarse[[1]], dv)
+d2h_fuzzy = setValues(d2h_lrNA[[1]], dv)
 plot(d2h_fuzzy)
 ```
 
@@ -222,7 +221,7 @@ plot(d2h_fuzzy)
 We'll combine the fuzzy isoscape with the uncertainty layer from the original isoscape, then rerun *QA* using the new version. Obviously this is not something you'd do in real work, but as an example it allows us to ask the question "how would the quality of my assignments change if my isoscape predictions were of reduced quality?". 
 
 ```{r QA2, warning=FALSE}
-d2h_fuzzy = brick(d2h_fuzzy, d2h_coarse[[2]])
+d2h_fuzzy = brick(d2h_fuzzy, d2h_lrNA[[2]])
 qa2 = QA(d2h_fuzzy, d, valiStation = 8, valiTime = 4, mask = naMap, name = "fuzzy")
 ```
 

@@ -11,14 +11,14 @@ How well does a given isoscape and known origin data set constrain the geographi
 }
 
 \usage{
-QA(isoscape, known, valiStation = floor(length(known)*0.1), valiTime = 50, 
+QA(isoscape, known, valiStation = ceiling(length(known)*0.1), valiTime = 50, 
   mask = NULL, setSeed = TRUE, name = NULL)
 }
 
 \arguments{
-  \item{isoscape}{RasterStack or RasterBrick with two layers, e.g., as created by \code{calRaster}. The first layer is the tissue-specific isoscape and the second the isoscape prediction uncertainty (1 standard deviation).
+  \item{isoscape}{RasterStack or RasterBrick with two layers. The first layer is mean isoscape prediction and the second the isoscape prediction uncertainty (1 standard deviation).
 }
-  \item{known}{SpatialPointsDataFrame. Known-origin data that should contain only one feature: tissue isotope value. Known-origin data can be queried using \code{knownOrig}.
+  \item{known}{SpatialPointsDataFrame. Known-origin data that should contain only one feature: tissue isotope value. Its length must be larger or equal to 3. Known-origin data can be queried using \code{knownOrig}.
 }
   \item{valiStation}{numeric. How many samples from known are withheld for validation? Must be two or more smaller than the length of \code{known}.
 }
@@ -64,26 +64,27 @@ Vander Zanden, H. B. et. al (2014) Contrasting assignment of migratory organisms
 \examples{
 # load data
 data("naMap") # North America 
-data("d2h_world") # precipitation hydrogen isotope of the world
+data("d2h_lrNA") # precipitation hydrogen isoscape for North America
 data("knownOrig") # hydrogen isotopes of known-origin samples
 
 # extract some known-origin data
-d1 = subOrigData(taxon = "Charadrius montanus")
-d2 = subOrigData(taxon = "Buteo lagopus")
+d1 = subOrigData(taxon = "Buteo lagopus")
 
 # run quality assessment based on precipitation hydrogen isotopes and 
-# known-origin birds; small values of valiStation and valiTime and aggregated
-# grid used in example to reduce run time
+# known-origin samples; small values of valiStation and valiTime 
+# are used in example to reduce run time
 
 # first with one example
-qa1 = QA(isoscape = raster::aggregate(d2h_world, 6), known = d1, 
-          valiStation = 1, valiTime = 2, mask = naMap, name = "Charadrius")
+# gives warning because a small number of samples are available
+qa1 = QA(isoscape = d2h_lrNA, known = d1, valiStation = 1, 
+          valiTime = 2, mask = naMap, name = "Buteo")
                     
 # plot the qa result
 plot(qa1)
 
-# now compare
-\donttest{qa2 = QA(isoscape = raster::aggregate(d2h_world, 6), known = d2, 
-          valiStation = 1, valiTime = 2, mask = naMap, name = "Buteo")
+# now compare with a second data set
+\donttest{d2 = subOrigData(taxon = "Charadrius montanus")
+qa2 = QA(isoscape = d2h_lrNA, known = d2, valiStation = 1, 
+          valiTime = 2, mask = naMap, name = "Charadrius")
 plot(qa1, qa2)}
 }

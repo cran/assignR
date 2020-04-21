@@ -1,24 +1,27 @@
-qtlRaster <- function(pdR, threshold, thresholdType = "area", genplot = TRUE, outDir = NULL){
-  if(class(pdR) != "RasterLayer" & class(pdR) != "RasterStack" & class(pdR) != "RasterBrick"){
-    stop("input probability density map (pdR) should be one of the following class: RasterLayer, RasterStack or RasterBrick")
+qtlRaster = function(pdR, threshold, thresholdType = "area", genplot = TRUE, outDir = NULL){
+  if(class(pdR)[1] != "RasterLayer" & class(pdR)[1] != "RasterStack" & 
+     class(pdR)[1] != "RasterBrick"){
+    stop("input probability density map (pdR) should be one of the following 
+         classes: RasterLayer, RasterStack or RasterBrick")
   }
-  if(class(threshold) != "numeric"){
-    stop("threshold must be one number between 0 and 1 ")
+  if(class(threshold)[1] != "numeric"){
+    stop("threshold must be a number between 0 and 1 ")
   }
-  if(length(threshold) != 1){
-    stop("threshold must be one number between 0 and 1 ")
+  if(length(threshold)[1] != 1){
+    stop("threshold must be a number between 0 and 1 ")
   }
   if(threshold < 0 | threshold > 1){
-    stop("threshold must be one number between 0 and 1")
+    stop("threshold must be a number between 0 and 1")
   }
   if(thresholdType != "area" & thresholdType != "prob"){
-    stop("thresholdType must be 'area' or 'prob'. See help page for further information")
+    stop("thresholdType must be 'area' or 'prob'. See help page for 
+         further information")
   }
-  if(class(genplot) != "logical"){
+  if(class(genplot)[1] != "logical"){
     stop("genplot must be logical (T/F)")
   }
   if(!is.null(outDir)){
-    if(class(outDir) != "character"){
+    if(class(outDir)[1] != "character"){
       stop("outDir should be a character string")
     }
     if(!dir.exists(outDir)){
@@ -27,65 +30,65 @@ qtlRaster <- function(pdR, threshold, thresholdType = "area", genplot = TRUE, ou
     }
   }
   
-  result <- pdR
-  n = raster::nlayers(result)  
+  result = pdR
+  n = nlayers(result)  
   if(thresholdType == "prob"){
-    for(i in 1:n){
+    for(i in seq_len(n)){
       if(threshold == 0){
         cut = 1
       } else if(threshold == 1){
         cut = 0
       } else{
-        pdR.values <- stats::na.omit(raster::getValues(pdR[[i]]))
-        pdR.values <- sort(pdR.values)
-        k <- length(pdR.values)
-        left <- 1
-        right <-  k
+        pdR.values = na.omit(getValues(pdR[[i]]))
+        pdR.values = sort(pdR.values)
+        k = length(pdR.values)
+        left = 1
+        right =  k
         while((right-left) > 2){
-          start <- round((left+right)/2)
-          total <- sum(pdR.values[start:k])
+          start = round((left+right)/2)
+          total = sum(pdR.values[start:k])
           if(total > threshold){
-            left <- start
+            left = start
           }
           if(total < threshold){
-            right <- start
+            right = start
           }
         }
         cut = pdR.values[start]        
       }
       if(n == 1){
-        result <- pdR[[i]] > cut
+        result = pdR[[i]] > cut
       }else{
-        result[[i]] <- pdR[[i]] > cut
+        result[[i]] = pdR[[i]] > cut
       }
     }
-    title1 <- "probability"
+    title1 = "probability"
   }
   
   if(thresholdType == "area"){
-    for(i in 1:n){
+    for(i in seq_len(n)){
       if(threshold == 0){
         cut = 1
       } else if(threshold == 1){
         cut = 0
       } else{
-        pdR.values <- stats::na.omit(raster::getValues(pdR[[i]]))
-        k <- length(pdR.values)
-        cut <- sort(pdR.values)[round((1-threshold)*k)]
+        pdR.values = na.omit(getValues(pdR[[i]]))
+        k = length(pdR.values)
+        cut = sort(pdR.values)[round((1-threshold)*k)]
       }
       if(n == 1){
-        result <- pdR[[i]] > cut
+        result = pdR[[i]] > cut
       }else{
-        result[[i]] <- pdR[[i]]>cut
+        result[[i]] = pdR[[i]]>cut
       }
     }
-    title1 <- "area"
+    title1 = "area"
   }
   
-  names(result) <- names(pdR)
+  names(result) = names(pdR)
   tls = character(n)
   if(n > 1){
-    for(i in 1:n){
+    for(i in seq_len(n)){
       tls[i] = paste0("Top ", threshold*100, "% quantile by ", title1, " for ", names(result)[i])
     }
   } else{
@@ -93,18 +96,18 @@ qtlRaster <- function(pdR, threshold, thresholdType = "area", genplot = TRUE, ou
   }
   
   if(genplot){
-    for(i in 1:n){
-      raster::plot(result[[i]], legend=FALSE)
-      graphics::title(tls[i])
+    for(i in seq_len(n)){
+      plot(result[[i]], legend=FALSE)
+      title(tls[i])
     }
   }
   if(!is.null(outDir)){
-    grDevices::pdf(paste0(outDir, "/qtlRaster_result.pdf"))
-    for(i in 1:n){
-      raster::plot(result[[i]], legend=FALSE)
-      graphics::title(tls[i])
+    pdf(paste0(outDir, "/qtlRaster_result.pdf"))
+    for(i in seq_len(n)){
+      plot(result[[i]], legend=FALSE)
+      title(tls[i])
     }
-    grDevices::dev.off()
+    dev.off()
   }
   return(result)
 }

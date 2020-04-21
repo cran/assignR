@@ -24,6 +24,8 @@ SpatialPoints or SpatialPolygons (or *DataFrame equivalent) of length 2
 }
 
 \examples{
+library(sp)
+
 # load North America boundary and global isoscape
 data("naMap")
 data("d2h_world")
@@ -44,21 +46,22 @@ un = data.frame(id,d2H)
 asn = pdRaster(r, unknown = un, mask = naMap)
 
 # SpatialPolygons for two regions of interest
-data("plover_range_BreedingSeason")
-data("plover_range_NonBreedingSeason")
+data("states")
+s1 = states[states$STATE_ABBR == "UT",]
+s2 = states[states$STATE_ABBR == "NM",]
 plot(naMap)
-plot(plover_range_BreedingSeason, col = c("red"), add = TRUE)
-plot(plover_range_NonBreedingSeason, col = c("blue"), add = TRUE)
+plot(s1, border = "red", add=TRUE)
+plot(s2, border = "blue", add=TRUE)
 
 # Get odds ratio for two regions using SpatialPolygon method
-p34 = rbind(plover_range_BreedingSeason, plover_range_NonBreedingSeason)
-oddsRatio(asn, p34)                      
+s12 = rbind(s1, s2)
+oddsRatio(asn, s12)                     
 
 # Create SpatialPoints for two points of interest
-pp1 = c(-108,42)
-pp2 = c(-103,25)
+pp1 = c(-112,40)
+pp2 = c(-105,33)
 pp12 = SpatialPoints(coords = rbind(pp1,pp2), 
-  proj4string=crs("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"))
+  proj4string=CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"))
 points(pp12, pch = 21, bg = "light blue")
 
 # Get odds ratio for two points using SpatialPoints method

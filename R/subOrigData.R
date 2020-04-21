@@ -1,4 +1,4 @@
-subOrigData <- function(marker = "d2H", taxon = NULL, group = NULL, reference = NULL, 
+subOrigData = function(marker = "d2H", taxon = NULL, group = NULL, reference = NULL, 
                         age_code = NULL, mask = NULL) {
   
   result = NULL
@@ -53,29 +53,31 @@ subOrigData <- function(marker = "d2H", taxon = NULL, group = NULL, reference = 
   }
 
   if(!is.null(mask)) {
-    if(class(mask) == "SpatialPolygonsDataFrame" || class(mask) == "SpatialPolygons"){
-      if(is.na(sp::proj4string(mask))){
+    if(class(mask)[1] == "SpatialPolygonsDataFrame" || 
+       class(mask)[1] == "SpatialPolygons"){
+      if(is.na(proj4string(mask))){
         stop("mask must have coordinate reference system")
       } else {
-        mask <- sp::spTransform(mask, "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
+        mask = spTransform(mask, "+proj=longlat +datum=WGS84 +no_defs 
+                            +ellps=WGS84 +towgs84=0,0,0")
       }
-      overlap <- result[mask,]
+      overlap = result[mask,]
     } else {
       stop("mask should be SpatialPolygons or SpatialPolygonsDataFrame")
     }
 
     if(length(overlap) > 0) {
-      sp::plot(mask, axes = TRUE)
-      sp::plot(overlap, add = TRUE, col = "red")
+      plot(mask, axes = TRUE)
+      plot(overlap, add = TRUE, col = "red")
     } else {
       stop("No samples found in mask\n")
     }
     
-    result <- overlap
+    result = overlap
     
   } else {
-    sp::plot(wrld_simpl, axes = TRUE)
-    sp::plot(result, add = TRUE, col = "red", cex = 0.5)
+    plot(wrld_simpl, axes = TRUE)
+    plot(result, add = TRUE, col = "red", cex = 0.5)
     
   }
   message(paste(length(result[,1]),"data points are found"))

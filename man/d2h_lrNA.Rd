@@ -1,22 +1,22 @@
-\name{d18o_world}
+\name{d2h_lrNA}
 
-\alias{d18o_world}
+\alias{d2h_lrNA}
 
 \docType{data}
 
 \title{
-Global growing season H isoscape
+Low resolution North American growing season H isoscape
 }
 
 \description{
-Global growing season precipitation O isoscape from waterisotopes.org
+Interpolated growing season precipitation H isoscape from waterisotopes.org
 }
 
-\usage{data("d18o_world")
+\usage{data("d2h_lrNA")
 }
 
 \format{
-RasterStack with two layers. The first layer is the mean prediction and the second is 1 standard deviation
+RasterBrick with two layers. The first layer is the mean prediction and the second is 1 standard deviation
 }
 
 \references{
@@ -30,6 +30,7 @@ IAEA/WMO (2018) Global Network of Isotopes in Precipitation. The GNIP Database. 
 \examples{
 library(raster)
 
-data("d18o_world")
-plot(d18o_world)
+data("d2h_lrNA")
+plot(d2h_lrNA)
 }
+

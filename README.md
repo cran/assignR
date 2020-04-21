@@ -7,7 +7,7 @@ Data and tools supporting geographic assignment of materials based on their isot
 For step-by-step examples demonstrating all functions see [https://spatial-lab.github.io/assignR/](https://spatial-lab.github.io/assignR/).
 
 ## Install and load
-install.packages("assignR")
+install.packages("assignR")     
 library(assignR)
 
 ## Package contents
@@ -22,9 +22,7 @@ library(assignR)
 
 *naMap.rda* - North America outline
 
-*plover_range_BreedingSeason.rda* - Mountain plover breeding season range
-
-*plover_range_NonBreedingSeason.rda* - Mountain plover non-breeding season range
+*states.rda* - 48 contiguous United States
 
 **Functions**
 
@@ -48,4 +46,6 @@ library(assignR)
 
 <!-- badges: start -->
   [![Travis build status](https://travis-ci.org/SPATIAL-Lab/assignR.svg?branch=master)](https://travis-ci.org/SPATIAL-Lab/assignR)
+  [![codecov](https://codecov.io/gh/Demerara/assignR/branch/master/graph/badge.svg)](https://codecov.io/gh/Demerara/assignR) 
   <!-- badges: end -->
+

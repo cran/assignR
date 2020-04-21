@@ -50,10 +50,10 @@ d2H = c(-110, -90, -105, -102)
 un = data.frame(id, d2H)
 
 # posterior probability surface
-asn = pdRaster(r,unknown=un,mask=naMap)
+asn = pdRaster(r, unknown=un, mask=naMap)
 
 # assign to most probable 10 percent of area
-\dontrun{qtlRaster(asn, threshold = 0.1, savePDF = TRUE)}
+\dontrun{qtlRaster(asn, threshold = 0.1)}
 
 # assign to most probable 10 percent of proabability distribution
 qtlRaster(asn, threshold = 0.1, thresholdType = "prob")
