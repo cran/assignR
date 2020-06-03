@@ -1,6 +1,9 @@
 subOrigData = function(marker = "d2H", taxon = NULL, group = NULL, reference = NULL, 
                         age_code = NULL, mask = NULL) {
   
+  data("knownOrig", envir = environment())
+  knownOrig = knownOrig
+  
   result = NULL
 
   if(!marker %in% colnames(knownOrig@data)){
@@ -57,9 +60,9 @@ subOrigData = function(marker = "d2H", taxon = NULL, group = NULL, reference = N
        class(mask)[1] == "SpatialPolygons"){
       if(is.na(proj4string(mask))){
         stop("mask must have coordinate reference system")
-      } else {
-        mask = spTransform(mask, "+proj=longlat +datum=WGS84 +no_defs 
-                            +ellps=WGS84 +towgs84=0,0,0")
+      } else if(!identicalCRS(knownOrig, mask)) {
+        mask = spTransform(mask, proj4string(knownOrig))
+        warning("mask was reprojected")
       }
       overlap = result[mask,]
     } else {

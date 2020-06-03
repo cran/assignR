@@ -102,7 +102,7 @@ Check out the help page for *pdRaster* for additional options, including the use
 # Post-hoc Analysis
 ## Odds Ratio
 
-The *oddsRatio* tool compares the posterior probabilities for two different locations or regions. This might be useful in answering real-world questions...for example "is this sample more likely from France or Spain?", or "how likley is this hypothesized location relative to other possibilities?". 
+The *oddsRatio* tool compares the posterior probabilities for two different locations or regions. This might be useful in answering real-world questions...for example "is this sample more likely from France or Spain?", or "how likely is this hypothesized location relative to other possibilities?". 
 
 Let's compare probabilities for two spatial areas - the states of Utah and New Mexico. First we'll load the SpatialPolygons and plot them.
 
@@ -130,9 +130,8 @@ Comparisons can also be made using points. Let's create two points (one in each 
 ```{r oddsRatio2}
 pp1 = c(-112,40)
 pp2 = c(-105,33)
-pp12 = SpatialPoints(coords = rbind(pp1,pp2), 
-                     proj4string=crs("+proj=longlat +datum=WGS84 +no_defs 
-                                     +ellps=WGS84 +towgs84=0,0,0"))
+pp12 = SpatialPoints(coords = rbind(pp1,pp2))
+proj4string(pp12) = proj4string(naMap)
 oddsRatio(asn, pp12)
 ```
 
@@ -191,7 +190,7 @@ How good are the geographic assignments? What area or probability threshold shou
 We will run quality assessment on the known-origin dataset and precipitation isoscape. These analyses take some time to run, depending on the number of stations and iterations used (this one took about two minutes on my desktop PC).  
 
 ```{r QA1, warning=FALSE}
-qa1 = QA(d2h_lrNA, d, valiStation = 8, valiTime = 4, mask = naMap, name = "normal")
+qa1 = QA(d2h_lrNA, d, valiStation = 8, valiTime = 4, by = 5, mask = naMap, name = "normal")
 ```
 
 *****
@@ -222,7 +221,7 @@ We'll combine the fuzzy isoscape with the uncertainty layer from the original is
 
 ```{r QA2, warning=FALSE}
 d2h_fuzzy = brick(d2h_fuzzy, d2h_lrNA[[2]])
-qa2 = QA(d2h_fuzzy, d, valiStation = 8, valiTime = 4, mask = naMap, name = "fuzzy")
+qa2 = QA(d2h_fuzzy, d, valiStation = 8, valiTime = 4, by = 5, mask = naMap, name = "fuzzy")
 ```
 
 *****

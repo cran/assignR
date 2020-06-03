@@ -55,9 +55,8 @@ oddsRatio(asn, s12)
 ## ----oddsRatio2---------------------------------------------------------------
 pp1 = c(-112,40)
 pp2 = c(-105,33)
-pp12 = SpatialPoints(coords = rbind(pp1,pp2), 
-                     proj4string=crs("+proj=longlat +datum=WGS84 +no_defs 
-                                     +ellps=WGS84 +towgs84=0,0,0"))
+pp12 = SpatialPoints(coords = rbind(pp1,pp2))
+proj4string(pp12) = proj4string(naMap)
 oddsRatio(asn, pp12)
 
 ## ----qtlRaster1---------------------------------------------------------------
@@ -76,7 +75,7 @@ up = unionP(asn)
 qtlRaster(up, threshold = 0.1)
 
 ## ----QA1, warning=FALSE-------------------------------------------------------
-qa1 = QA(d2h_lrNA, d, valiStation = 8, valiTime = 4, mask = naMap, name = "normal")
+qa1 = QA(d2h_lrNA, d, valiStation = 8, valiTime = 4, by = 5, mask = naMap, name = "normal")
 
 ## ----plot.QA1-----------------------------------------------------------------
 plot(qa1)
@@ -89,7 +88,7 @@ plot(d2h_fuzzy)
 
 ## ----QA2, warning=FALSE-------------------------------------------------------
 d2h_fuzzy = brick(d2h_fuzzy, d2h_lrNA[[2]])
-qa2 = QA(d2h_fuzzy, d, valiStation = 8, valiTime = 4, mask = naMap, name = "fuzzy")
+qa2 = QA(d2h_fuzzy, d, valiStation = 8, valiTime = 4, by = 5, mask = naMap, name = "fuzzy")
 
 ## ----plot.QA2-----------------------------------------------------------------
 plot(qa1, qa2)
