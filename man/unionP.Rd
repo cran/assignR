@@ -23,14 +23,13 @@ RasterStack or RasterBrick of probability density maps, e.g., as produced by \co
 \examples{
 # load North America boundary and global isoscape
 data("naMap")
-data("d2h_world")
+data("d2h_lrNA")
 
 # load hydrogen isotope data for human hair in North America
-d = subOrigData(taxon = "Homo sapiens", 
-  reference = "Ehleringer et al. 2008", mask = naMap)
+d = subOrigData(group = "Modern human", mask = naMap, niter = 100)
 
 # rescale from environmental isoscape to tissue isoscape
-r = calRaster(known = d, isoscape = d2h_world, mask = naMap)
+r = calRaster(known = d, isoscape = d2h_lrNA, mask = naMap)
 
 # four unknown-origin examples
 id = c("A", "B", "C", "D")

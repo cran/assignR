@@ -16,7 +16,7 @@ pdRaster(r, unknown, prior = NULL, mask = NULL, genplot = TRUE, outDir = NULL)
 
 \arguments{
 \item{r}{
-RasterStack or RasterBrick with two layers, e.g., as created by \code{calRaster}. The first layer is the tissue-specific isoscape and the second the isoscape prediction uncertainty (1 standard deviation).
+RasterStack or RasterBrick with two layers, e.g., as created by \code{\link[assignR]{calRaster}}. The first layer is the tissue-specific isoscape and the second the isoscape prediction uncertainty (1 standard deviation).
 }
 \item{unknown}{
 data.frame. First column should be unique sample IDs, and second column should be tissue isotope values for the individuals for which the assignments will be made.
@@ -34,8 +34,9 @@ logical. Plot results in R.
 character string. Directory path to which output will be saved. If NULL no files are written.
 }
 }
+
 \value{
-RasterStack or RasterLayer including a probability density surface for each individual in unknown. If \code{saveFiles} == TRUE writes individual rasters in GeoTIFF format and a single PDF file with images for each probability density raster to the working directory.
+RasterStack or RasterLayer including a probability density surface for each individual in \code{unknown}. If \code{outDir} is not NULL, writes individual rasters in GeoTIFF format and a single PDF file with images for each probability density raster to the designated directory.
 }
 
 \seealso{
@@ -48,8 +49,7 @@ data("naMap")
 data("d2h_world")
 
 # load hydrogen isotope data for human hair in North America
-d = subOrigData(taxon = "Homo sapiens", 
-  reference = "Ehleringer et al. 2008", mask = naMap)
+d = subOrigData(group = "Modern human", mask = naMap)
 
 # rescale from environmental isoscape to tissue isoscape
 r = calRaster(known = d, isoscape = d2h_world, mask = naMap)

@@ -4,13 +4,12 @@ library(raster)
 data("naMap")
 data("d2h_world")
 
-d = subOrigData(taxon = "Homo sapiens", 
-                reference = "Ehleringer et al. 2008", mask = naMap)
-r = calRaster(known = d, isoscape = d2h_world, mask = naMap)
+d = subOrigData(group = "Modern human", mask = naMap)
+r = calRaster(known = d, isoscape = d2h_world, mask = naMap, genplot = FALSE)
 id = "smile"
 d2H = -80
 un = data.frame(id, d2H)
-asn = pdRaster(r, unknown = un, mask = naMap)
+asn = pdRaster(r, unknown = un, mask = naMap, genplot = FALSE)
 
 mask_noCRS = naMap
 crs(mask_noCRS) = NA
@@ -32,11 +31,11 @@ test_that("pdRaster can correctly calculate posterior probabilities of origin
             expect_error(pdRaster(r, unknown = as.matrix(un)))
             expect_error(pdRaster(r, unknown = un_hasNA))
             expect_error(pdRaster(r, unknown = data.frame(un$id,un$id)))
-            expect_error(pdRaster(r, unknown = data.frame(un,un)))
+            expect_error(pdRaster(r, unknown = data.frame(un[,1])))
             expect_error(pdRaster(r, unknown = un, genplot = 2))
             expect_error(pdRaster(r, unknown = un, outDir = 2))
             expect_error(pdRaster(r, unknown = un, mask = mask_noCRS))
             expect_error(pdRaster(r, unknown = un, mask = 2))
-            expect_warning(pdRaster(r, unknown = un, mask = mask_diffProj))
+            expect_warning(pdRaster(r, unknown = un, mask = mask_diffProj, genplot = FALSE))
             
 })
