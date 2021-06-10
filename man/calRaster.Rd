@@ -17,7 +17,7 @@ calRaster(known, isoscape, mask = NULL, interpMethod = 2, NA.value = NA,
 
 \arguments{
   \item{known}{
-subOrigData or SpatialPointsDataFrame. Known-origin tissue isotope data from the subOrgData function or provided by user. User-provided data must be formatted as a subOrigData object (see \code{\link[assignR]{subOrigData}} or a SpatialPointsDataFrame in which the first data field contains the measured tissue isotope value and the second the 1 standard deviation uncertainty on that value.
+subOrigData or SpatialPointsDataFrame. Known-origin tissue isotope data from the subOrigData function or provided by user. User-provided data must be formatted as a subOrigData object (see \code{\link[assignR]{subOrigData}} or a SpatialPointsDataFrame in which the first data field contains the measured tissue isotope value and the second the 1 standard deviation uncertainty on that value.
 }
   \item{isoscape}{
 raster. Isoscape raster with two layers. The first one is the mean and the second is one standard deviation.
@@ -46,6 +46,7 @@ logical. Print out the linear regression results.
 }
 
 \value{
+Returns an object of class \dQuote{rescale}.
 \item{isoscape.rescale}{RasterBrick. \code{isoscape} rescaled using a linear regression model between values of \code{known} and \code{isoscape}. The first layer is the mean prediction and the second the standard deviation.}
 \item{lm.data}{data.frame. Known origin data and extracted \code{isoscape} values used for linear regression modeling.}
 \item{lm.model}{list. Linear regression model.}

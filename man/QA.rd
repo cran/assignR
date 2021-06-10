@@ -12,14 +12,14 @@ How well does a given isoscape and known origin data set constrain the geographi
 
 \usage{
 QA(known, isoscape, bySite = TRUE, valiStation = 1, valiTime = 50, 
-  by = 2, mask = NULL, setSeed = TRUE, name = NULL)
+  by = 2, prior = NULL, mask = NULL, setSeed = TRUE, name = NULL)
 }
 
 \arguments{
   \item{known}{
-subOrigData or SpatialPointsDataFrame. Known-origin tissue isotope data from the \code{subOrigData} function or provided by user. User-provided data must be formatted as a subOrgData object (see \code{\link[assignR]{subOrigData}}) or a SpatialPointsDataFrame in which the first data field contains the measured tissue isotope value and the second the one standard deviation uncertainty on that value. A user-provided SpatialPointsDataFrame must include a field named \dQuote{Site_ID} containing unique values for each sampling site to support the \dQuote{bySite} option, otherwise use \code{bySite = FALSE}.
+subOrigData, list of subOrigData, or SpatialPointsDataFrame. Known-origin tissue isotope data from the \code{subOrigData} function or provided by user. User-provided data must be formatted as subOrigData objects (see \code{\link{subOrigData}}) or a SpatialPointsDataFrame (see Details).
 }
-  \item{isoscape}{RasterStack or RasterBrick with two layers. The first layer is mean isoscape prediction and the second the isoscape prediction uncertainty (one standard deviation).
+  \item{isoscape}{RasterStack or RasterBrick with two layers or \code{\link{isoStack}} object. For user-generated raster objects, the first layer must be the environmental isoscape (mean prediction) and the second the isoscape prediction uncertainty (1 standard deviation).
 }
   \item{bySite}{logical. Resample known by site (TRUE) or by sample (FALSE)?}
   \item{valiStation}{numeric. How many sites or samples from known are withheld for validation? Must be two or more smaller than the length of \code{known}.
@@ -27,12 +27,18 @@ subOrigData or SpatialPointsDataFrame. Known-origin tissue isotope data from the
   \item{valiTime}{numeric. How many times do you want to randomly draw validation samples and run the validation? Must be an integer equal to or greater than one. 
 }
   \item{by}{integer. Threshold increment to use in evaluating assignment performance. Must be between 1 and 25.}
+  \item{prior}{raster. Optional raster layer with prior probabilities, which has the same projection, resolution and extent as \code{isoscape}.
+}
   \item{mask}{SpatialPolygonsDataFrame. Constrains the area of the output rasters. If this is not provided, the entire area of \code{isoscape} is returned.
 }
   \item{setSeed}{logical. Do you want to \code{set.seed()} when you randomly draw validation stations? \dQuote{TRUE} gives the same sequence of random draws each time the function is called.
 }
   \item{name}{character. Useful for identifying the QA output in subsequent plotting.
   }
+}
+
+\details{
+If \code{known} is a user-provided SpatialPointsDataFrame, the first field in \code{@data} must include the measured value for the first (or only) isotope marker and the second the one standard deviation uncertainty on that value. Subsequent fields must include the same information for all other isotope markers included in the analysis, and these markers must appear in the same order as in \code{isoscape}. A user-provided SpatialPointsDataFrame must include a field named \dQuote{Site_ID} containing unique values for each sampling site to support the \dQuote{bySite} option, otherwise use \code{bySite = FALSE}.
 }
 
 \value{

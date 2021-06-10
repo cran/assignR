@@ -1,11 +1,15 @@
 calRaster = function (known, isoscape, mask = NULL, interpMethod = 2,
-          NA.value = NA, ignore.NA = TRUE, genplot = TRUE, 
-          outDir = NULL, verboseLM = TRUE)
-{
+                      NA.value = NA, ignore.NA = TRUE, genplot = TRUE, 
+                      outDir = NULL, verboseLM = TRUE){
+
   #check that isoscape is valid and has defined CRS
   if(class(isoscape)[1] == "RasterStack" | class(isoscape)[1] == "RasterBrick") {
     if(is.na(proj4string(isoscape))) {
       stop("isoscape must have valid coordinate reference system")
+    }
+    if(nlayers(isoscape) != 2) {
+      stop("isoscape should be RasterStack or RasterBrick with two layers 
+         (mean and standard deviation)")
     }
   } else {
     stop("isoscape should be a RasterStack or RasterBrick")
@@ -46,7 +50,7 @@ calRaster = function (known, isoscape, mask = NULL, interpMethod = 2,
     if(class(known) == "QAData"){
       class(known) = "SpatialPointsDataFrame"
     } else{
-      warning("user-provided known; assuming measured isotope value and 1 sd
+      message("user-provided known; assuming measured isotope value and 1 sd
             uncertainty are contained in columns 1 and 2, respectively")
     }
     col_m = 1
@@ -70,7 +74,7 @@ calRaster = function (known, isoscape, mask = NULL, interpMethod = 2,
   } 
   if(proj4string(known) != proj4string(isoscape)){
     known = spTransform(known, crs(isoscape))
-    warning("known was reprojected")
+    message("known was reprojected")
   } 
 
   #check that mask is valid and has defined, correct CRS
@@ -82,7 +86,7 @@ calRaster = function (known, isoscape, mask = NULL, interpMethod = 2,
       }
       if(proj4string(mask) != proj4string(isoscape)){
         mask = spTransform(mask, crs(isoscape))
-        warning("mask was reprojected")
+        message("mask was reprojected")
       }
     } else {
       stop("mask should be SpatialPolygons or SpatialPolygonsDataFrame")
@@ -101,7 +105,7 @@ calRaster = function (known, isoscape, mask = NULL, interpMethod = 2,
       stop("outDir should be a character string")
     }
     if(!dir.exists(outDir)){
-      warning("outDir does not exist, creating")
+      message("outDir does not exist, creating")
       dir.create(outDir)
     }
   }
@@ -127,7 +131,8 @@ calRaster = function (known, isoscape, mask = NULL, interpMethod = 2,
 
   #populate the dependent variable values
   tissue.iso = known@data[, col_m]
-  tissue.iso.wt = 1 / known@data[, col_sd]^2
+  tissue.iso.sd = known@data[, col_sd]
+  tissue.iso.wt = 1 / tissue.iso.sd^2
 
   #populate the independent variable values
   if (interpMethod == 1) {
@@ -137,6 +142,8 @@ calRaster = function (known, isoscape, mask = NULL, interpMethod = 2,
     isoscape.iso = extract(isoscape, known,
                                     method = "bilinear")
   }
+  #protect against negative values from interpolation
+  isoscape.iso[,2] = pmax(isoscape.iso[,2], cellStats(isoscape[[2]], min))
 
   #warn if some known sites have NA isoscape values
   if (any(is.na(isoscape.iso[, 1]))) {
@@ -220,11 +227,13 @@ calRaster = function (known, isoscape, mask = NULL, interpMethod = 2,
     isoscape.dev = c(isoscape.dev, isoscape.sim[,i] - isoscape.iso[,1])
     tissue.dev = c(tissue.dev, lm.sim$residuals)
   }
-
+  
+  ti.corr = cor(isoscape.dev, tissue.dev)^2
+  
   #combine uncertainties of isoscape and rescaling function
-  #rescaling variance is added variance from simulated fits
-  sd = (isoscape[[2]]^2 + (var(tissue.dev) - var(isoscape.dev)))^0.5
-
+  #rescaling variance is frac of model variance uncorrelated w/ isoscape error
+  sd = sqrt(isoscape[[2]]^2 + var(lmResult$residuals) * (1-ti.corr))
+  
   #stack the output rasters and apply names
   isoscape.rescale = stack(isoscape.rescale, sd)
   names(isoscape.rescale) = c("mean", "sd")
@@ -265,7 +274,7 @@ calRaster = function (known, isoscape, mask = NULL, interpMethod = 2,
   #package results
   result = list(isoscape.rescale = isoscape.rescale, lm.data = xyw,
                 lm.model = lmResult)
-  class(result) = "rescale"
+  class(result) = c("rescale")
           
   #done
   return(result)
