@@ -1,9 +1,9 @@
-72e5a619887a4b5662d21dad6941bbe8 *DESCRIPTION
+da6b8e31df2871cdbdd109bb3465545e *DESCRIPTION
 80442d1ed1d849f676c6f9d022c2d359 *NAMESPACE
-0389b92447739193e3c5c69611b09f37 *NEWS.md
+f52cbae8362fbf6f1520898144efefdc *NEWS.md
 19f60967e85ac7b98c20a6187dadc47e *R/QA.R
 3f58864cf09119c9116d3f9d2e30a414 *R/calRaster.R
-0398fba301ab731716bc26e234fa34f9 *R/getIsoscapes.R
+dcf64e048a7ac14c743c1dff95a26bab *R/getIsoscapes.R
 aae32af62255107dd8dd83dd352fb317 *R/isoStack.R
 33831219fecbc70e2ad6f12f25b5e658 *R/oddsRatio.R
 9840299229e9c8aea66f7dcdf614ca53 *R/pdRaster.R
@@ -12,9 +12,9 @@ fac280abc12de0ae0d08cb84f07359e4 *R/plot.QA.R
 e2a708109ad97a4aa3c3776466925fb1 *R/refTrans.R
 a4d7d361dec4a5eb092d3604f486827b *R/subOrigData.R
 d75bf5be800a9b2aef81540ecfd3a359 *R/summarize.R
-9d0c1982476438335af9ec96f1442bc5 *R/sysdata.rda
-2e8ab0b9bf6875be7416b8aa9625860c *README.md
-6e395134f3dc632ff87e59667f9a25b8 *build/partial.rdb
+8155e1f5635f48ce4323c5c148256d5e *R/sysdata.rda
+0e25821750338711f23bbf1474731e77 *README.md
+6b14cdf7cf66b94ccbbd7f69988544b8 *build/partial.rdb
 e7eb0307d4bdc21898a7793dd45c6d9c *build/vignette.rds
 44b61d8b2fe0882309814151d73aa73c *data/d2h_lrNA.rda
 bf4474800f9ff536a620916641fecb2e *data/knownOrig.rda
@@ -25,7 +25,7 @@ ad4614526b309cb598d9010495a64082 *data/stds.rda
 83f197335012dce6fc0e81fd6897ccc5 *inst/CITATION
 91a3bf1380514a73e2419f67c8130a43 *inst/doc/assignR.R
 6cd5c88a3ed6e129078f09e2da475c82 *inst/doc/assignR.Rmd
-70818467edd0dabbf6e3f6a1d3a174c1 *inst/doc/assignR.html
+b023a7613c32d5ca6d60ad7cbbd6c0fb *inst/doc/assignR.html
 d84b1a36642ff1c1d6c4711cee10c188 *man/QA.rd
 87fc6fd7eb074ea6c3ed0b4b4483a03c *man/assignR.Rd
 9f470a18931eab1e57a106c32460d6f2 *man/calRaster.Rd
