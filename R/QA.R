@@ -1,7 +1,6 @@
-QA = function(known, isoscape, bySite = TRUE, 
-              valiStation = 1, valiTime = 50, by = 2, 
-              prior = NULL, mask = NULL, setSeed = TRUE, 
-              name = NULL){
+QA = function(known, isoscape, bySite = TRUE, valiStation = 1, 
+              valiTime = 50, recal = TRUE, by = 2, prior = NULL, 
+              mask = NULL, setSeed = TRUE, name = NULL){
 
   #space to handle messages and warnings
   mstack = wstack = character(0)
@@ -20,11 +19,11 @@ QA = function(known, isoscape, bySite = TRUE,
   }
 
   #check isoscape and set ni number of isotopes
-  if(class(isoscape)[1] == "isoStack"){
+  if(inherits(isoscape, "isoStack")){
     ni = length(isoscape)
     
     for(i in isoscape){
-      if(class(i)[1] != "RasterStack" & class(i)[1] != "RasterBrick"){
+      if(!inherits(i, c("RasterStack", "RasterBrick"))){
         stop("Input isoscapes should be RasterStack or RasterBrick with two layers 
          (mean and standard deviation)")
       } 
@@ -32,19 +31,18 @@ QA = function(known, isoscape, bySite = TRUE,
         stop("Input isoscapes should be RasterStack or RasterBrick with two layers 
          (mean and standard deviation)")
       }
-      if(class(i)[1] == "RasterStack"){
+      if(inherits(i, "RasterStack")){
         crs(i[[1]]) = crs(i[[2]]) = crs(i)
       }
     }
   } else{
     ni = 1
     
-    if(class(isoscape)[1] == "rescale"){
+    if(inherits(isoscape, "rescale")){
       isoscape = isoscape$isoscape.rescale
     }
     
-    if(class(isoscape)[1] == "RasterStack" | 
-        class(isoscape)[1] == "RasterBrick") {
+    if(inherits(isoscape, c("RasterStack", "RasterBrick"))) {
       if(is.na(crs(isoscape))) {
         stop("isoscape must have valid coordinate reference system")
       }
@@ -52,7 +50,7 @@ QA = function(known, isoscape, bySite = TRUE,
         stop("Input isoscape should be RasterStack or RasterBrick with two layers 
          (mean and standard deviation)")
       }
-      if(class(isoscape)[1] == "RasterStack"){
+      if(inherits(isoscape, "RasterStack")){
         crs(isoscape[[1]]) = crs(isoscape[[2]]) = crs(isoscape)
       }
     } else {
@@ -63,7 +61,7 @@ QA = function(known, isoscape, bySite = TRUE,
   #check known for multi-isotope
   if(ni > 1){
     #two options for ni>1, list of SODs, check and unpack each to spdf
-    if(class(known)[1] == "list"){
+    if(inherits(known, "list")){
       if(length(known) != ni){
         stop("length of known must equal length of isoStack")
       }
@@ -100,7 +98,7 @@ QA = function(known, isoscape, bySite = TRUE,
     } 
     #if ni == 1
   } else{
-    if(class(known)[1] == "subOrigData"){
+    if(inherits(known, "subOrigData")){
       known = withCallingHandlers(
         message = addm,
         warning = addw,
@@ -109,7 +107,7 @@ QA = function(known, isoscape, bySite = TRUE,
     }
   }
   #SOD or SOD list will now be converted to this
-  if(class(known)[1] == "SpatialPointsDataFrame"){
+  if(inherits(known, "SpatialPointsDataFrame")){
     known = withCallingHandlers(
       message = addm,
       warning = addw,
@@ -121,6 +119,21 @@ QA = function(known, isoscape, bySite = TRUE,
     )
   } else{
     stop("invalid object provided for known")
+  }
+
+  #check recal
+  if(!inherits(recal, "logical")){
+    stop("recal must be logical")
+  }
+  if(!recal){
+    valiTime = nrow(known)
+    valiStation = 1
+    bySite = FALSE
+  }
+  
+  #check valiTime
+  if(valiTime < 2){
+    stop("valiTime must be an integer greater than 1")
   }
 
   #check valiStation
@@ -136,11 +149,6 @@ QA = function(known, isoscape, bySite = TRUE,
     }
   }
   
-  #check valiTime
-  if(valiTime < 2){
-    stop("valiTime must be an integer greater than 1")
-  }
-  
   #check by
   if(!(as.integer(by) == by) || by < 1 || by > 25){
     stop("by must be an integer between 1 and 25")
@@ -148,7 +156,7 @@ QA = function(known, isoscape, bySite = TRUE,
   
   #check name
   if(!is.null(name)){
-    if(class(name)[1] != "character"){
+    if(!inherits(name, "character")){
       stop("name must be a character string")
     }
   }
@@ -157,7 +165,6 @@ QA = function(known, isoscape, bySite = TRUE,
   if(!is.logical(setSeed)){
     stop("setSeed must be logical")
   }
-  
   if(setSeed){
     set.seed(100)
   }
@@ -169,11 +176,15 @@ QA = function(known, isoscape, bySite = TRUE,
     rowLength = nrow(known)
     ids = seq_len(rowLength)
   }
-  val_stations = sort(sample(ids, valiStation, replace = FALSE))
-  for (i in seq_len(valiTime)[-1]){
-    val_stations = rbind(val_stations, 
-                          sort(sample(ids, valiStation, 
-                                      replace = FALSE)))
+  if(recal){
+    val_stations = sort(sample(ids, valiStation, replace = FALSE))
+    for (i in seq_len(valiTime)[-1]){
+      val_stations = rbind(val_stations, 
+                           sort(sample(ids, valiStation, 
+                                       replace = FALSE)))
+    }
+  } else{
+    val_stations = matrix(ids, nrow = rowLength)
   }
 
   xx = seq(1, 101, by)
@@ -197,28 +208,32 @@ QA = function(known, isoscape, bySite = TRUE,
       m = known[-val_stations[i,],]
     }
     
-    if(ni > 1){
-      rescales = list()
-      for(j in 1:ni){
-        m_sub = m
-        m_sub@data = m_sub@data[,(j * 2 - 1):(j * 2)]
-        class(m_sub) = "QAData"
-        rescales[[j]] = withCallingHandlers(
+    if(recal){
+      if(ni > 1){
+        rescales = list()
+        for(j in 1:ni){
+          m_sub = m
+          m_sub@data = m_sub@data[,(j * 2 - 1):(j * 2)]
+          class(m_sub) = "QAData"
+          rescales[[j]] = withCallingHandlers(
+            message = addm,
+            warning = addw,
+            calRaster(m_sub, isoscape[[j]], mask, genplot = FALSE, 
+                      verboseLM = FALSE)[[1]]
+          )
+        }
+        rescale = isoStack(rescales)
+      } else{
+        class(m) = "QAData"
+        rescale = withCallingHandlers(
           message = addm,
           warning = addw,
-          calRaster(m_sub, isoscape[[j]], mask, genplot = FALSE, 
-                    verboseLM = FALSE)[[1]]
+          calRaster(m, isoscape, mask, genplot = FALSE, 
+                    verboseLM = FALSE)
         )
-      }
-      rescale = isoStack(rescales)
+      } 
     } else{
-      class(m) = "QAData"
-      rescale = withCallingHandlers(
-        message = addm,
-        warning = addw,
-        calRaster(m, isoscape, mask, genplot = FALSE, 
-                            verboseLM = FALSE)
-      )
+      rescale = isoscape
     }
 
     pd = withCallingHandlers(

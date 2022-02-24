@@ -1,11 +1,10 @@
 oddsRatio = function(pdR, inputP){
   
-  if(class(pdR) != "RasterLayer" & class(pdR) != "RasterStack" & class(pdR) != "RasterBrick"){
+  if(!inherits(pdR, c("RasterLayer", "RasterStack", "RasterBrick"))){
     stop("input probability density map (pdR) should be one of the following class: RasterLayer, RasterStack or RasterBrick")
   }
 
-  if(class(inputP)[1] == "SpatialPoints" || 
-     class(inputP)[1] == "SpatialPointsDataFrame"){
+  if(inherits(inputP, "SpatialPoints")){
     if(is.na(proj4string(inputP))){
       stop("inputP must have coord. ref.")
     }
@@ -16,12 +15,15 @@ oddsRatio = function(pdR, inputP){
     
     n = length(inputP)
     extrVals = extract(pdR, inputP)
+    if(any(is.na(extrVals))){
+      stop("one or more points have probability NA")
+    }
     result2 = data.frame(ratioToMax = extrVals/maxValue(pdR), ratioToMin = extrVals/minValue(pdR))
     if(n == 1){
       result = result2
     }
     else if(n == 2){
-      if(class(pdR)[1] == "RasterStack" | class(pdR)[1] == "RasterBrick"){
+      if(inherits(pdR, c("RasterStack", "RasterBrick"))){
         result1 = (extrVals[1,]/(1-extrVals[1,])) / 
           (extrVals[2,]/(1-extrVals[2,]))
       } else {
@@ -36,8 +38,7 @@ oddsRatio = function(pdR, inputP){
     }
   }
   
-  if(class(inputP)[1] == "SpatialPolygons" || 
-     class(inputP)[1] == "SpatialPolygonsDataFrame"){
+  if(inherits(inputP, "SpatialPolygons")){
     if(length(inputP) != 2){
       stop("input polygons (inputP) should be two polygons")
     }
@@ -51,11 +52,17 @@ oddsRatio = function(pdR, inputP){
     
     extrVals = extract(pdR, inputP)
     if(nlayers(pdR) > 1){
-      extrVals.p1 = colSums(extrVals[[1]])
-      extrVals.p2 = colSums(extrVals[[2]])
+      extrVals.p1 = colSums(extrVals[[1]], na.rm = TRUE)
+      extrVals.p2 = colSums(extrVals[[2]], na.rm = TRUE)
+      if(any(extrVals.p1 == 0) | any(extrVals.p2 == 0)){
+        stop("No values in P1 and/or P2")
+      }
     } else {
-      extrVals.p1 = sum(extrVals[[1]])
-      extrVals.p2 = sum(extrVals[[2]])
+      extrVals.p1 = sum(extrVals[[1]], na.rm = TRUE)
+      extrVals.p2 = sum(extrVals[[2]], na.rm = TRUE)
+      if(extrVals.p1 == 0 | extrVals.p2 == 0){
+        stop("No values in P1 and/or P2")
+      }
     }
     result1 = (extrVals.p1/(1-extrVals.p1))/(extrVals.p2/(1-extrVals.p2))
     result2 = ncell(crop(pdR, inputP[1,]))/ncell(crop(pdR, inputP[2,]))

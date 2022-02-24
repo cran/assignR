@@ -105,6 +105,18 @@ pp12 = SpatialPoints(coords = rbind(pp1,pp2))
 proj4string(pp12) = proj4string(naMap)
 oddsRatio(Ll_prob, pp12)
 
+## ----wDist1, fig.width=5, fig.asp=0.8, out.width='45%'------------------------
+# View the data
+plot(Ll_prob[[1]], main = names(Ll_prob)[1])
+points(pp12[1])
+plot(Ll_prob[[2]], main = names(Ll_prob)[2])
+points(pp12[2])
+
+## ----wDist2, fig.width=5, fig.asp=0.8, out.width='45%'------------------------
+wd = wDist(Ll_prob[[1:2]], pp12)
+c(wd)[c(1,2,4,6,8,10,12,14,16)] #only showing select columns for formatting!
+plot(wd)
+
 ## ----qtlRaster1, fig.width=5, fig.asp=0.8, out.width='45%'--------------------
 qtlRaster(Ll_prob, threshold = 0.1)
 

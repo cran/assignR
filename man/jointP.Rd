@@ -20,6 +20,10 @@ RasterStack or RasterBrick of probability density maps, e.g., as produced by \co
 }
 }
 
+\value{
+RasterLayer.
+}
+
 \examples{
 # load North America boundary and isoscape
 data("naMap")
@@ -36,9 +40,9 @@ id = c("A", "B", "C", "D")
 d2H = c(-110, -90, -105, -102)
 un = data.frame(id,d2H)
 
-# assignment
-asn = pdRaster(r, unknown = un, mask = naMap)
+# posterior probabilities
+pp = pdRaster(r, unknown = un, mask = naMap)
 
 # joint probability for individuals of common origin
-jointP(asn)
+jointP(pp)
 }
