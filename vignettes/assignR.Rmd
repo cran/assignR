@@ -261,7 +261,7 @@ c(wd)[c(1,2,4,6,8,10,12,14,16)] #only showing select columns for formatting!
 plot(wd)
 ```
 
-Comparing these statistics and plots with the data shows how the `wDist` metrics nicely summarize the direction and distance of movement. Both individuals almost certainly moved south from their location of origin to the collection location. Individual a's migration may have been a little bit longer than b's, and in a more southwesterly direction, patterns that are dominated more by the difference in collection locations than the probability surfaces for location of origin. Also notice the multi-modal distance distribution for individual b...these can be common in `wDist` summaries so it's a good ideal to look at the distributions themselves before choosing and interpreting summary statistics.
+Comparing these statistics and plots with the data shows how the `wDist` metrics nicely summarize the direction and distance of movement. Both individuals almost certainly moved south from their location of origin to the collection location. Individual a's migration may have been a little bit shorter than b's, and in a more southwesterly direction, patterns that are dominated more by the difference in collection locations than the probability surfaces for location of origin. Also notice the multi-modal distance distribution for individual a...these can be common in `wDist` summaries so it's a good ideal to look at the distributions themselves before choosing and interpreting summary statistics.
 
 ## Assignment
 
