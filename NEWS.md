@@ -1,5 +1,8 @@
 # assignR news
 
+## assignR 2.2.1.9000
+* Updated error handling in getIsoscapes
+
 ## assignR 2.2.1
 * Remove data from projects 14 and 15 from knownOrig dataset
 
