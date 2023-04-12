@@ -1,6 +1,6 @@
-58731c3f202ed65287b799448f8eb68c *DESCRIPTION
+5ff7847ddc407676250ab1f44c77cdb3 *DESCRIPTION
 a94048bbdebdec4c0c623662453e46fd *NAMESPACE
-621cdbfd5b1855d8132fd60d8d5562a4 *NEWS.md
+943d58937e5531279f3673293bc76971 *NEWS.md
 77d0c8e017fe3b89854fa47c0f02b0cb *R/QA.R
 c503daa51ca88a3a331ae5ea50b66cb1 *R/calRaster.R
 ad9d5f6f3056d2be6b63d6d8404fbd77 *R/getIsoscapes.R
@@ -26,7 +26,7 @@ ad4614526b309cb598d9010495a64082 *data/stds.rda
 4ebd0c5f7505a9222f8ae8465c75713d *inst/CITATION
 424b66a905f89b41953d2f5befb6ad34 *inst/doc/assignR.R
 1a79a8b7d98453ffaa73885aae84abe9 *inst/doc/assignR.Rmd
-a628787147b83f5bdcd23fa701272e72 *inst/doc/assignR.html
+6f1b9c86c99970988e168ecc1acf07ec *inst/doc/assignR.html
 e3ae260856ad6098bf3103145d5dc100 *man/QA.rd
 87fc6fd7eb074ea6c3ed0b4b4483a03c *man/assignR.Rd
 0eb0bc164de1693a5bc31a2476839ce0 *man/c.wDist.Rd
@@ -53,7 +53,7 @@ ff240fec3b35385789a1330edc37a13e *man/subOrigData.Rd
 35805dd9b501a3390f66d81d56c9984a *tests/testthat.R
 8f286105525bac37c605e0ddfb2a2783 *tests/testthat/test_getIsoscapes.R
 d72f8d6f018960c9f735dbacee0f7e84 *tests/testthat/test_pdRaster.R
-32e8d142cfa982cd7d2a8485b69b0e10 *tests/testthat/test_plot.QA.R
+15eeaee1300ce8ea23639a5961525901 *tests/testthat/test_plot.QA.R
 72219ba73a30f97e966c8764d9da2617 *tests/testthat/test_plot.isoStack.R
 2d13b41f1b7ed9f1d65e24b54b19e288 *tests/testthat/test_processing.R
 6f52a1b5533bb7477a000755029642b5 *tests/testthat/test_refTrans.R
