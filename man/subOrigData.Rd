@@ -12,7 +12,7 @@ This function subsets the known-origin isotope dataset included in this package 
 
 \usage{
 subOrigData(marker = "d2H", taxon = NULL, group = NULL, dataset = NULL, 
-  age_code = NULL, mask = NULL, ref_scale = "VSMOW_H", niter = 5000)
+  age_code = NULL, mask = NULL, ref_scale = "VSMOW_H", niter = 5000, genplot = TRUE)
 }
 
 \arguments{
@@ -32,19 +32,22 @@ integer or integer vector. Dataset_ID(s) for data to be extracted. See \code{\li
 character string or string vector. Animal age code for data to be extracted. 
 }
   \item{mask}{
-SpatialPolygons or SpatialPolygonsDataFrame. Constrains the geographic area from which data are extracted. If not provided, global.
+SpatVector. Polygon layer used to constrain the geographic area from which data are extracted. If not provided, global.
 }
   \item{ref_scale}{
 character string. Text identifier for reference scale to which all isotope values will be transformed. See \code{\link[assignR]{stds}}. Use \dQuote{NULL} to obtain untransformed values on the originally reported scale.}
   \item{niter}{
 integer. Number of random samples used to propagate uncertainty in calibration hierarchy transformations.
 }
+\item{genplot}{
+logical. Plot results in R.
+}
 }
 
 \value{
 Returns an object of class \dQuote{subOrigData}, formatted for use in \code{\link{calRaster}} or \code{\link{QA}} functions.
   \item{data}{
-SpatialPointsDataFrame including one feature for each selected sample. data.frame fields are described in \code{\link{knownOrig}} feature \emph{samples}.}
+SpatVector including one point feature for each selected sample. Data fields are described in \code{\link{knownOrig}} feature \emph{samples}.}
   \item{sources}{
 data.frame. Information for all data sources for the selected samples. Fields are described in \code{\link{knownOrig}} feature \emph{sources} 
   }
@@ -69,18 +72,18 @@ d1 = subOrigData(taxon = c("Danaus plexippus", "Setophaga ruticilla",
 summary(d1)
 
 # extract d2H data for insects and passerine birds without transformation
-d2 = subOrigData(group = c("Insect","Passerine"), ref_scale = NULL)
+d2 = subOrigData(group = c("Insect","Passerine"), ref_scale = NULL, genplot = FALSE)
 summary(d2)
 
 # extract d18O data for all humans, transformed to the VSMOW/SLAP O reference scale
 d3 = subOrigData(marker = "d18O", 
   group = c("Modern human", "Indigenous human"), ref_scale = "VSMOW_O", 
-  niter = 100)
+  niter = 100, genplot = FALSE)
 summary(d3)
 
 # extract d2H data for humans using taxon, transformed to the VSMOW/SLAP H reference scale
 d4 = subOrigData(marker = "d2H", taxon = "Homo sapiens", ref_scale = 
-  "VSMOW_H", niter = 100)
+  "VSMOW_H", niter = 100, genplot = FALSE)
 summary(d4)
 
 ## WITH mask
@@ -88,5 +91,5 @@ summary(d4)
 \dontrun{d5 = subOrigData(taxon = "Turdus philomelos", mask = naMap)}
 # this works OK
 d6 = subOrigData(taxon = c("Danaus plexippus", "Setophaga ruticilla", 
-  "Turdus migratorius"), mask = naMap)
+  "Turdus migratorius"), mask = naMap, genplot = FALSE)
 }

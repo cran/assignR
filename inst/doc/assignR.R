@@ -3,25 +3,21 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE)
 
 ## ----load, message=FALSE, warning=FALSE, results="hide"-----------------------
 library(assignR)
-library(raster)
-library(sp)
+library(terra)
 
 ## ----boundary-----------------------------------------------------------------
-data("naMap")
 plot(naMap)
 
 ## ----isoscape, fig.width=7, fig.asp=0.45--------------------------------------
-data("d2h_lrNA")
 plot(d2h_lrNA)
 
 ## ----knownOrig_names----------------------------------------------------------
-data("knownOrig")
 names(knownOrig$sites)
 names(knownOrig$samples)
 names(knownOrig$sources)
 
-## ----knownOrig_sites, fig.width=5, fig.asp=0.8--------------------------------
-plot(assignR:::wrld_simpl)
+## ----knownOrig_sites, fig.width=6, fig.asp=0.6--------------------------------
+plot(wrld_simpl)
 points(knownOrig$sites, col = "red")
 
 ## ----knownOrig_taxa-----------------------------------------------------------
@@ -40,7 +36,7 @@ Ll_d$sources[,1:3]
 Ll_d = subOrigData(taxon = "Lanius ludovicianus", mask = naMap, ref_scale = NULL)
 Ll_d$sources$H_cal
 
-## ----calRaster, fig.width=5, fig.asp=0.8, out.width='45%'---------------------
+## ----calRaster, fig.width=6, fig.asp=0.8, out.width='90%'---------------------
 d2h_Ll = calRaster(known = Ll_d, isoscape = d2h_lrNA, mask = naMap)
 
 ## ----samples------------------------------------------------------------------
@@ -56,38 +52,35 @@ print(Ll_un)
 Ll_un = refTrans(Ll_un, ref_scale = "OldEC.1_H_1")
 print(Ll_un)
 
-## ----pdRaster, fig.width=5, fig.asp=0.8, out.width='45%'----------------------
-Ll_prob = pdRaster(d2h_Ll, unknown = Ll_un)
+## ----pdRaster, fig.width=6, fig.asp=0.6, out.width='95%'----------------------
+Ll_prob = pdRaster(d2h_Ll, Ll_un)
 
 ## ----sums---------------------------------------------------------------------
-cellStats(Ll_prob[[1]], 'sum')
+global(Ll_prob[[1]], 'sum', na.rm = TRUE)
 
 ## ----Dp, fig.width=5, fig.asp=0.8, out.width='45%'----------------------------
 Dp_d = subOrigData(taxon = "Danaus plexippus")
 d2h_Dp = calRaster(Dp_d, d2h_lrNA)
 
 ## ----srIso, fig.width=5, fig.asp=0.8, out.width='45%'-------------------------
-data("sr_MI")
 plot(sr_MI$weathered.mean)
-proj4string(sr_MI)
-proj4string(d2h_Dp$isoscape.rescale)
+crs(sr_MI, describe = TRUE)
+crs(d2h_Dp$isoscape.rescale, describe = TRUE)
 
 ## ----isoStack-----------------------------------------------------------------
 Dp_multi = isoStack(d2h_Dp, sr_MI)
-lapply(Dp_multi, proj4string)
-lapply(Dp_multi, bbox)
+lapply(Dp_multi, crs, describe = TRUE)
 
 ## ----Dp_unknown---------------------------------------------------------------
 Dp_unk = data.frame("ID" = c("A", "B"), "d2H" = c(-86, -96), "Sr" = c(0.7089, 0.7375))
 
-## ----Dp_Honly, fig.width=5, fig.asp=0.8, out.width='45%'----------------------
+## ----Dp_Honly, fig.width=5, fig.asp=0.6, out.width='85%'----------------------
 Dp_pd_Honly = pdRaster(Dp_multi[[1]], Dp_unk[,-3])
 
-## ----Dp_multi, fig.width=5, fig.asp=0.8, out.width='45%'----------------------
+## ----Dp_multi, fig.width=5, fig.asp=0.6, out.width='85%'----------------------
 Dp_pd_multi = pdRaster(Dp_multi, Dp_unk)
 
 ## ----polygons-----------------------------------------------------------------
-data("states")
 s1 = states[states$STATE_ABBR == "UT",]
 s2 = states[states$STATE_ABBR == "NM",]
 plot(naMap)
@@ -101,16 +94,16 @@ oddsRatio(Ll_prob, s12)
 ## ----oddsRatio2---------------------------------------------------------------
 pp1 = c(-112,40)
 pp2 = c(-105,33)
-pp12 = SpatialPoints(coords = rbind(pp1,pp2))
-proj4string(pp12) = proj4string(naMap)
+pp12 = vect(rbind(pp1,pp2))
+crs(pp12) = crs(naMap)
 oddsRatio(Ll_prob, pp12)
 
 ## ----wDist1, fig.width=5, fig.asp=0.8, out.width='45%'------------------------
 # View the data
 plot(Ll_prob[[1]], main = names(Ll_prob)[1])
-points(pp12[1])
+points(pp12[1], cex = 2)
 plot(Ll_prob[[2]], main = names(Ll_prob)[2])
-points(pp12[2])
+points(pp12[2], cex = 2)
 
 ## ----wDist2, fig.width=5, fig.asp=0.8, out.width='45%'------------------------
 wd = wDist(Ll_prob[[1:2]], pp12)
@@ -139,13 +132,13 @@ qa1 = QA(Ll_d, d2h_lrNA, valiStation = 8, valiTime = 4, by = 5, mask = naMap, na
 plot(qa1)
 
 ## ----modraster, fig.width=5, fig.asp=0.8--------------------------------------
-dv = getValues(d2h_lrNA[[1]])
+dv = values(d2h_lrNA[[1]])
 dv = dv + rnorm(length(dv), 0, 15)
 d2h_fuzzy = setValues(d2h_lrNA[[1]], dv)
 plot(d2h_fuzzy)
 
 ## ----QA2, warning=FALSE, results='hide'---------------------------------------
-d2h_fuzzy = brick(d2h_fuzzy, d2h_lrNA[[2]])
+d2h_fuzzy = c(d2h_fuzzy, d2h_lrNA[[2]])
 qa2 = QA(Ll_d, d2h_fuzzy, valiStation = 8, valiTime = 4, by = 5, mask = naMap, name = "fuzzy")
 
 ## ----plot.QA2, fig.width=4, fig.asp=1, out.width='45%'------------------------
