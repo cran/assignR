@@ -1,9 +1,9 @@
-626d3645c0f48ba68911850278327447 *DESCRIPTION
-aa3c75f0eef9b499cb10bc156eb07a3c *NAMESPACE
-004f232c01776504b97f928729a9fff0 *NEWS.md
+a49c18ac9153d2c65c7de20026c4f753 *DESCRIPTION
+b5e368d5bfa34283887b7627b025172e *NAMESPACE
+2d4d0d3718b34d360fbec0d2b36bfd9b *NEWS.md
 cc11fd0207b93f73135d3129ea3fa515 *R/QA.R
 a5e2c50b03ff0e03dd9c54aefa1f364f *R/build_files.R
-37747f29aba8672f99a3b47f3f712142 *R/calRaster.R
+52ddb14c575247501b99f02adf4c972f *R/calRaster.R
 5017b8b789f36d265f2db07f6c1a0251 *R/getIsoscapes.R
 ed0794a66554c98af5731f5e9c248784 *R/isoStack.R
 4e3d495dca5f7fc7a49725b39ba92c23 *R/oddsRatio.R
@@ -12,7 +12,7 @@ ed0794a66554c98af5731f5e9c248784 *R/isoStack.R
 ac0717cacfb9c8b19fcd9275da5649c3 *R/qtlRaster.R
 b033eedef75501bc13b7b5b03ae60cd0 *R/refTrans.R
 2dc093d8c6ca5734146418cc6ad132ed *R/subOrigData.R
-2d4ec77b5f1043c4f3e6100f4b7bdc83 *R/summarize.R
+ef95773530c1f71211fc58e6eec2417d *R/summarize.R
 607410ae3e172d3055762fed73b754bd *R/sysdata.rda
 840af0482a7835751aea5cd7facf9672 *R/wDist.R
 33447d8418611335708573ec11ce9852 *README.md
@@ -22,7 +22,7 @@ c0c38777a8c83408e3177c08087e45c2 *data/stds.rda
 4ebd0c5f7505a9222f8ae8465c75713d *inst/CITATION
 3c7b862406200f238386acf0e07d2328 *inst/doc/assignR.R
 adc8e14ef108bddb0f667a1dd4e233e1 *inst/doc/assignR.Rmd
-ecfe6ff447e681dc1095cc1a552d7969 *inst/doc/assignR.html
+ef2fdee68bb21ab838a6afa2093b858c *inst/doc/assignR.html
 9c6db8c4a68a69d75a534b51dc350f42 *inst/extdata/d2h_lrNA.tif
 8bb834355eef4d3c46e2e36e1983eead *inst/extdata/knownOrig_samples.csv
 ae3b3df9970b49b6523e608759bc957d *inst/extdata/knownOrig_sites.cpg
@@ -76,6 +76,6 @@ c1e71139ff9fee24b2558de92698cae2 *tests/testthat.R
 1428e1fa047115c1b7e991deb889e821 *tests/testthat/test_pdRaster.R
 63f75b55f12331aeb234153544030161 *tests/testthat/test_plot.QA.R
 48db99f8aed7c2856d1a92b3eb19dbf5 *tests/testthat/test_plot.isoStack.R
-a09620cc6a0ff452d006bfea5a07d37c *tests/testthat/test_processing.R
+54185e8cec8d38194d6f6bb1234482f1 *tests/testthat/test_processing.R
 6f52a1b5533bb7477a000755029642b5 *tests/testthat/test_refTrans.R
 adc8e14ef108bddb0f667a1dd4e233e1 *vignettes/assignR.Rmd

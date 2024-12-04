@@ -1,5 +1,9 @@
 # assignR news
 
+## assignR 2.4.3
+* Bug fixes and enhanced error checking
+* Requires R >= 4.0
+
 ## assignR 2.4.1
 * Single site can be provided in wDist and will be recycled with a message
 * wDist allows specification of bandwidth for kernel density estimation
